@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Un Regalo Especial Para Ti ❤️</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            width: 100%;
+            height: 100vh;
+            background: linear-gradient(135deg, #ffb3d9 0%, #ff99cc 50%, #ffb3d9 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Arial', sans-serif;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Pantallas */
+        .screen {
+            display: none;
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .screen.active {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Corazones de fondo */
+        .hearts-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 5;
+        }
+
+        .heart {
+            position: absolute;
+            font-size: 2rem;
+            opacity: 0.6;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .heart:nth-child(1) { animation-delay: 0s; left: 10%; top: 20%; }
+        .heart:nth-child(2) { animation-delay: 1s; right: 15%; top: 30%; }
+        .heart:nth-child(3) { animation-delay: 2s; left: 20%; bottom: 20%; }
+        .heart:nth-child(4) { animation-delay: 1.5s; right: 10%; bottom: 30%; }
+        .heart:nth-child(5) { animation-delay: 2.5s; left: 50%; top: 10%; }
+        .heart:nth-child(6) { animation-delay: 3s; right: 40%; bottom: 15%; }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px) rotate(0deg);
+            }
+            25% {
+                transform: translateY(-20px) rotate(5deg);
+            }
+            50% {
+                transform: translateY(-40px) rotate(0deg);
+            }
+            75% {
+                transform: translateY(-20px) rotate(-5deg);
+            }
+        }
+
+        /* Contenido principal */
+        .container {
+            text-align: center;
+            z-index: 10;
+            position: relative;
+            padding: 40px;
+        }
+
+        .title {
+            font-size: 2.2rem;
+            color: #fff;
+            margin-bottom: 60px;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+            line-height: 1.4;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .button {
+            padding: 20px 50px;
+            font-size: 1.3rem;
+            background: linear-gradient(135deg, #ff6b9d 0%, #ff4757 100%);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .button:active {
+            transform: scale(0.98);
+        }
+
+        /* Efecto de click del botón */
+        .button.clicked {
+            animation: pulse 0.5s ease;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+        }
+
+        /* Corazones que caen al hacer click */
+        .falling-heart {
+            position: fixed;
+            font-size: 3rem;
+            pointer-events: none;
+            animation: fall 3s ease-in forwards;
+            z-index: 100;
+        }
+
+        @keyframes fall {
+            0% {
+                transform: translateY(-100px) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .title {
+                font-size: 1.3rem;
+                margin-bottom: 20px;
+                padding: 0 15px;
+            }
+
+            .button {
+                padding: 15px 35px;
+                font-size: 1rem;
+            }
+
+            .heart {
+                font-size: 1.5rem;
+            }
+
+            .container {
+                padding: 15px;
+            }
+
+            /* PUZLE EN MÓVIL */
+            .puzzle-container {
+                flex-direction: column;
+                gap: 15px;
+                padding: 10px;
+            }
+
+            .puzzle-board {
+                grid-template-columns: repeat(4, 60px);
+                grid-gap: 1px;
+                padding: 5px;
+                min-height: auto;
+            }
+
+            .puzzle-slot {
+                width: 60px;
+                height: 60px;
+            }
+
+            .puzzle-piece {
+                width: 60px;
+                height: 60px;
+                background-size: 240px 240px !important;
+            }
+
+            .puzzle-pieces-area {
+                gap: 5px;
+                padding: 10px;
+                min-height: auto;
+                max-height: 200px;
+                overflow-y: auto;
+            }
+
+            /* CUESTIONARIO EN MÓVIL */
+            .quiz-container {
+                max-width: 90%;
+                padding: 20px;
+                border-radius: 10px;
+            }
+
+            .quiz-title {
+                font-size: 1.4rem;
+                margin-bottom: 20px;
+            }
+
+            .question-text {
+                font-size: 1rem;
+            }
+
+            .option {
+                padding: 10px 12px;
+                font-size: 0.95rem;
+            }
+
+            .submit-btn {
+                padding: 12px;
+                font-size: 1rem;
+            }
+
+            .final-message {
+                font-size: 1.5rem;
+                padding: 20px;
+            }
+
+            #photoStatus {
+                font-size: 0.85rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .title {
+                font-size: 1.1rem;
+                margin-bottom: 15px;
+            }
+
+            .button {
+                padding: 12px 25px;
+                font-size: 0.95rem;
+            }
+
+            .puzzle-board {
+                grid-template-columns: repeat(4, 50px);
+                min-height: auto;
+            }
+
+            .puzzle-slot {
+                width: 50px;
+                height: 50px;
+            }
+
+            .puzzle-piece {
+                width: 50px;
+                height: 50px;
+                background-size: 200px 200px !important;
+            }
+
+            .quiz-container {
+                padding: 15px;
+                max-width: 95%;
+            }
+
+            .quiz-title {
+                font-size: 1.2rem;
+            }
+
+            .question-text {
+                font-size: 0.95rem;
+            }
+
+            .final-message {
+                font-size: 1.3rem;
+                padding: 15px;
+            }
+
+            .option input[type="radio"] {
+                margin-right: 8px;
+            }
+        }
+
+        /* ESTILOS PUZLE */
+        .puzzle-container {
+            display: flex;
+            gap: 40px;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: flex-start;
+            max-width: 1200px;
+            margin-top: 20px;
+        }
+
+        .puzzle-board {
+            display: grid;
+            grid-template-columns: repeat(4, 80px);
+            grid-gap: 2px;
+            background: rgba(255, 255, 255, 0.3);
+            padding: 10px;
+            border-radius: 10px;
+            min-height: 340px;
+        }
+
+        .puzzle-slot {
+            width: 80px;
+            height: 80px;
+            background: rgba(255, 255, 255, 0.5);
+            border: 2px dashed rgba(255, 255, 255, 0.7);
+            border-radius: 5px;
+            position: relative;
+            cursor: grab;
+        }
+
+        .puzzle-piece {
+            width: 80px;
+            height: 80px;
+            background-size: 320px 320px;
+            cursor: grab;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s ease;
+            position: absolute;
+        }
+
+        .puzzle-piece:hover {
+            transform: scale(1.05);
+        }
+
+        .puzzle-pieces-area {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            min-height: 200px;
+            align-content: flex-start;
+        }
+
+        /* ESTILOS CUESTIONARIO */
+        .quiz-container {
+            max-width: 600px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .quiz-title {
+            font-size: 1.8rem;
+            color: #ff4757;
+            margin-bottom: 30px;
+            font-weight: bold;
+        }
+
+        .question {
+            margin-bottom: 30px;
+            text-align: left;
+        }
+
+        .question-text {
+            font-size: 1.1rem;
+            color: #333;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .option {
+            padding: 12px 15px;
+            background: #f0f0f0;
+            border: 2px solid transparent;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+
+        .option:hover {
+            background: #e0e0e0;
+            border-color: #ff6b9d;
+        }
+
+        .option input[type="radio"] {
+            margin-right: 10px;
+            cursor: pointer;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #ff6b9d 0%, #ff4757 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .submit-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        /* PANTALLA FINAL */
+        .final-message {
+            text-align: center;
+            font-size: 2.5rem;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+            animation: pulse 1s ease infinite;
+        }
+
+        @keyframes pulse-final {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+    </style>
+
+</head>
+<body>
+    <!-- Corazones flotantes de fondo -->
+    <div class="hearts-container">
+        <div class="heart">❤️</div>
+        <div class="heart">💕</div>
+        <div class="heart">❤️</div>
+        <div class="heart">💕</div>
+        <div class="heart">❤️</div>
+        <div class="heart">💕</div>
+    </div>
+
+    <!-- PANTALLA 1: INICIO -->
+    <div id="screen1" class="screen active">
+        <div class="container">
+            <h1 class="title">Este regalo es algo distinto, porque tendrás que resolver un par de retos para poder conseguirlo 👀</h1>
+            <div style="margin-bottom: 30px;">
+                <label for="photoInput" style="display: inline-block; padding: 12px 25px; background: rgba(255,255,255,0.3); border-radius: 25px; color: white; cursor: pointer; font-weight: bold; border: 2px solid white;">
+                    📷 Carga una foto
+                </label>
+                <input type="file" id="photoInput" accept="image/*" style="display: none;" onchange="loadPhoto(event)">
+                <p id="photoStatus" style="color: white; margin-top: 10px; font-size: 0.9rem;">Selecciona una foto para el puzle</p>
+            </div>
+            <button class="button" id="startBtn" onclick="goToPuzzle()" disabled style="opacity: 0.5; cursor: not-allowed;">Haz click aquí</button>
+        </div>
+    </div>
+
+    <!-- PANTALLA 2: PUZLE -->
+    <div id="screen2" class="screen">
+        <div class="container">
+            <h2 class="title">Resuelve el puzle para pasar a la siguiente fase</h2>
+            <div class="puzzle-container">
+                <div class="puzzle-board" id="puzzleBoard"></div>
+                <div class="puzzle-pieces-area" id="piecesArea"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PANTALLA 3: CUESTIONARIO -->
+    <div id="screen3" class="screen">
+        <div class="container">
+            <div class="quiz-container">
+                <h2 class="quiz-title">Última fase - Cuestionario 💕</h2>
+                <div id="quizContent"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PANTALLA FINAL -->
+    <div id="screenFinal" class="screen">
+        <div class="container">
+            <div class="final-message">
+                ¡Felicidades! 🎉<br>
+                <br>
+                <span id="finalMessage" style="font-size: 2rem; animation: pulse-final 1s ease infinite;">Aquí va tu sorpresa especial ✨</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let puzzleSolved = false;
+        const PUZZLE_SIZE = 4;
+        const PIECE_SIZE = 80;
+        let uploadedImageData = null; // Guardar la imagen cargada
+
+        // Variable para la imagen del puzle
+        let puzzleImageUrl = 'pareja.jpg'; // Por defecto, busca pareja.jpg
+
+        function loadPhoto(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    uploadedImageData = e.target.result;
+                    puzzleImageUrl = uploadedImageData;
+                    document.getElementById('photoStatus').textContent = '✅ Foto cargada correctamente';
+                    document.getElementById('photoStatus').style.color = '#90EE90';
+                    document.getElementById('startBtn').disabled = false;
+                    document.getElementById('startBtn').style.opacity = '1';
+                    document.getElementById('startBtn').style.cursor = 'pointer';
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function switchScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+        }
+
+        function goToPuzzle() {
+            const button = document.getElementById('startBtn');
+            button.classList.add('clicked');
+            setTimeout(() => button.classList.remove('clicked'), 500);
+
+            // Crear corazones cayendo
+            for (let i = 0; i < 8; i++) {
+                setTimeout(() => createFallingHeart(), i * 100);
+            }
+
+            setTimeout(() => {
+                switchScreen('screen2');
+                initPuzzle();
+            }, 1500);
+        }
+
+        function initPuzzle() {
+            const puzzleBoard = document.getElementById('puzzleBoard');
+            const piecesArea = document.getElementById('piecesArea');
+            
+            puzzleBoard.innerHTML = '';
+            piecesArea.innerHTML = '';
+
+            // Crear slots del puzle
+            for (let i = 0; i < PUZZLE_SIZE * PUZZLE_SIZE; i++) {
+                const slot = document.createElement('div');
+                slot.className = 'puzzle-slot';
+                slot.id = `slot-${i}`;
+                slot.ondrop = handleDrop;
+                slot.ondragover = handleDragOver;
+                slot.ondragleave = handleDragLeave;
+                puzzleBoard.appendChild(slot);
+            }
+
+            // Crear piezas del puzle
+            const pieces = [];
+            for (let i = 0; i < PUZZLE_SIZE * PUZZLE_SIZE; i++) {
+                pieces.push(i);
+            }
+            
+            // Revolver piezas
+            for (let i = pieces.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [pieces[i], pieces[j]] = [pieces[j], pieces[i]];
+            }
+
+            pieces.forEach((index) => {
+                const row = Math.floor(index / PUZZLE_SIZE);
+                const col = index % PUZZLE_SIZE;
+                
+                const piece = document.createElement('div');
+                piece.className = 'puzzle-piece';
+                piece.id = `piece-${index}`;
+                piece.draggable = true;
+                piece.dataset.correctSlot = `slot-${index}`;
+                
+                piece.style.backgroundImage = `url('${puzzleImageUrl}')`;
+                piece.style.backgroundPosition = `${-col * PIECE_SIZE}px ${-row * PIECE_SIZE}px`;
+                piece.style.backgroundSize = `${PUZZLE_SIZE * PIECE_SIZE}px ${PUZZLE_SIZE * PIECE_SIZE}px`;
+                
+                piece.ondragstart = handleDragStart;
+                piece.ondragend = handleDragEnd;
+                
+                piecesArea.appendChild(piece);
+            });
+        }
+
+        let draggedElement = null;
+
+        function handleDragStart(e) {
+            draggedElement = this;
+            this.style.opacity = '0.5';
+            e.dataTransfer.effectAllowed = 'move';
+        }
+
+        function handleDragEnd(e) {
+            this.style.opacity = '1';
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            this.style.backgroundColor = 'rgba(255, 255, 255, 0.8)';
+        }
+
+        function handleDragLeave(e) {
+            this.style.backgroundColor = 'rgba(255, 255, 255, 0.5)';
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            this.style.backgroundColor = 'rgba(255, 255, 255, 0.5)';
+            
+            if (draggedElement && draggedElement.dataset.correctSlot === this.id) {
+                // Pieza correcta
+                draggedElement.style.position = 'static';
+                draggedElement.style.cursor = 'default';
+                draggedElement.draggable = false;
+                this.appendChild(draggedElement);
+                checkPuzzleCompletion();
+            }
+        }
+
+        function checkPuzzleCompletion() {
+            const slots = document.querySelectorAll('.puzzle-slot');
+            const completed = Array.from(slots).every(slot => slot.children.length > 0);
+            
+            if (completed) {
+                puzzleSolved = true;
+                setTimeout(() => {
+                    for (let i = 0; i < 8; i++) {
+                        setTimeout(() => createFallingHeart(), i * 100);
+                    }
+                    setTimeout(() => switchScreen('screen3'), 1500);
+                    initQuiz();
+                }, 500);
+            }
+        }
+
+        const quizData = [
+            {
+                question: "¿Cuanto piensas que te quiero??",
+                options: [
+                    { text: "Infinito", correct: true },
+                    { text: "Normal", correct: false },
+                    { text: "Nada de esto", correct: false }
+                ]
+            },
+            {
+                question: "¿Donde tenía pensado pedirte salir y cómo??",
+                options: [
+                    { text: "En el centro con una carta y un peluche", correct: false },
+                    { text: "En una cita romántica con un ramo de flores y un peluche", correct: false },
+                    { text: "En el parque de Aluche con una carta y un anillo de papel", correct: true },
+                    { text: "En tu casa con una carta y un anillo de papel", correct: false }
+                ]
+            },
+            {
+                question: "¡Más difícil! ¿Dónde quiero que sea nuestro primer viaje de novios?",
+                options: [
+                    { text: "París", correct: false },
+                    { text: "Londres", correct: true }
+                ]
+            },
+            {
+                question: "¡Si la fallas te mato! ¿Cómo se llama mi yaya?",
+                options: [
+                    { text: "Carmen", correct: false },
+                    { text: "María del Carmen", correct: true },
+                    { text: "Dolores", correct: false }
+                ]
+            }
+        ];
+
+        function initQuiz() {
+            const quizContent = document.getElementById('quizContent');
+            quizContent.innerHTML = '';
+
+            quizData.forEach((q, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'question';
+                
+                const questionText = document.createElement('div');
+                questionText.className = 'question-text';
+                questionText.textContent = `${index + 1}. ${q.question}`;
+                questionDiv.appendChild(questionText);
+
+                const optionsDiv = document.createElement('div');
+                optionsDiv.className = 'options';
+
+                q.options.forEach((option, optIndex) => {
+                    const label = document.createElement('label');
+                    label.className = 'option';
+                    
+                    const input = document.createElement('input');
+                    input.type = 'radio';
+                    input.name = `question-${index}`;
+                    input.value = optIndex;
+                    input.dataset.correct = option.correct;
+                    
+                    label.appendChild(input);
+                    label.appendChild(document.createTextNode(option.text));
+                    optionsDiv.appendChild(label);
+                });
+
+                questionDiv.appendChild(optionsDiv);
+                quizContent.appendChild(questionDiv);
+            });
+
+            const submitBtn = document.createElement('button');
+            submitBtn.className = 'submit-btn';
+            submitBtn.textContent = 'Enviar Respuestas';
+            submitBtn.onclick = submitQuiz;
+            quizContent.appendChild(submitBtn);
+        }
+
+        function submitQuiz() {
+            let correctAnswers = 0;
+            const totalQuestions = quizData.length;
+
+            for (let i = 0; i < totalQuestions; i++) {
+                const selectedOption = document.querySelector(`input[name="question-${i}"]:checked`);
+                if (selectedOption && selectedOption.dataset.correct === 'true') {
+                    correctAnswers++;
+                }
+            }
+
+            if (correctAnswers === totalQuestions) {
+                // ¡Todas correctas!
+                for (let i = 0; i < 12; i++) {
+                    setTimeout(() => createFallingHeart(), i * 100);
+                }
+                setTimeout(() => {
+                    switchScreen('screenFinal');
+                    showFinalMessage();
+                }, 1500);
+            } else {
+                // Mostrar resultados y opción de repetir
+                const quizContent = document.getElementById('quizContent');
+                quizContent.innerHTML = `
+                    <div style="text-align: center; padding: 20px;">
+                        <div style="font-size: 2rem; color: #ff4757; margin-bottom: 20px;">
+                            Resultado: ${correctAnswers}/${totalQuestions}
+                        </div>
+                        <p style="color: #666; margin-bottom: 20px; font-size: 1.1rem;">
+                            No todas las respuestas son correctas. ¡Inténtalo de nuevo!
+                        </p>
+                        <button class="submit-btn" onclick="retryQuiz()">Repetir Cuestionario</button>
+                    </div>
+                `;
+            }
+        }
+
+        function retryQuiz() {
+            const quizContent = document.getElementById('quizContent');
+            quizContent.innerHTML = '';
+            initQuiz();
+        }
+
+        function showFinalMessage() {
+            const finalMessage = document.getElementById('finalMessage');
+            finalMessage.innerHTML = `
+                <div style="font-size: 1.4rem; line-height: 1.6; color: white; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);">
+                    ¡Has superado todas las pruebas!<br><br>
+                    Te lo he puesto fácil, así que no dudaba de ti.<br><br>
+                    <span style="font-size: 1.5rem;">El regalo es una cita en el sitio que tú elijas:<br>Cine, restaurante, parque... ¡lo que quieras!</span><br><br>
+                    Espero que te haya encantado y nada,<br>muchas gracias por estar conmigo,<br>
+                    <span style="font-size: 1.6rem; animation: pulse-final 1s ease infinite;">me haces super feliz</span><br><br>
+                    <span style="font-size: 2rem;">TE QUIEROOOOO 💝</span>
+                </div>
+            `;
+        }
+
+        function createFallingHeart() {
+            const heart = document.createElement('div');
+            heart.className = 'falling-heart';
+            heart.textContent = ['❤️', '💕', '💖'][Math.floor(Math.random() * 3)];
+            heart.style.left = Math.random() * window.innerWidth + 'px';
+            heart.style.top = '50px';
+            document.body.appendChild(heart);
+            setTimeout(() => heart.remove(), 3000);
+        }
+
+        // Intentar cargar imagen por defecto si existe
+        window.addEventListener('load', () => {
+            console.log('Página cargada. Esperando foto...');
+        });
+    </script>
+</body>
+</html>
