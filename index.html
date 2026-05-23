@@ -330,6 +330,7 @@
             border-radius: 5px;
             position: relative;
             cursor: grab;
+            touch-action: none;
         }
 
         .puzzle-piece {
@@ -341,6 +342,10 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             transition: transform 0.2s ease;
             position: absolute;
+            touch-action: none;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-touch-callout: none;
         }
 
         .puzzle-piece:hover {
@@ -356,6 +361,8 @@
             border-radius: 10px;
             min-height: 200px;
             align-content: flex-start;
+            position: relative;
+            touch-action: none;
         }
 
         /* ESTILOS CUESTIONARIO */
@@ -599,11 +606,18 @@
                 piece.ondragstart = handleDragStart;
                 piece.ondragend = handleDragEnd;
                 
+                // Agregar soporte táctil para móviles
+                piece.addEventListener('touchstart', handleTouchStart, false);
+                piece.addEventListener('touchmove', handleTouchMove, false);
+                piece.addEventListener('touchend', handleTouchEnd, false);
+                
                 piecesArea.appendChild(piece);
             });
         }
 
         let draggedElement = null;
+        let touchStartX = 0;
+        let touchStartY = 0;
 
         function handleDragStart(e) {
             draggedElement = this;
@@ -637,6 +651,58 @@
                 this.appendChild(draggedElement);
                 checkPuzzleCompletion();
             }
+        }
+
+        // SOPORTE TÁCTIL PARA MÓVILES
+        function handleTouchStart(e) {
+            draggedElement = this;
+            this.style.opacity = '0.5';
+            this.style.zIndex = '1000';
+            touchStartX = e.touches[0].clientX;
+            touchStartY = e.touches[0].clientY;
+        }
+
+        function handleTouchMove(e) {
+            if (!draggedElement) return;
+            e.preventDefault();
+            
+            draggedElement.style.position = 'fixed';
+            draggedElement.style.left = (e.touches[0].clientX - draggedElement.offsetWidth / 2) + 'px';
+            draggedElement.style.top = (e.touches[0].clientY - draggedElement.offsetHeight / 2) + 'px';
+        }
+
+        function handleTouchEnd(e) {
+            if (!draggedElement) return;
+            
+            draggedElement.style.opacity = '1';
+            draggedElement.style.zIndex = '1';
+            
+            const touch = e.changedTouches[0];
+            const element = document.elementFromPoint(touch.clientX, touch.clientY);
+            
+            if (element && element.classList.contains('puzzle-slot')) {
+                if (draggedElement.dataset.correctSlot === element.id) {
+                    draggedElement.style.position = 'static';
+                    draggedElement.style.left = '0';
+                    draggedElement.style.top = '0';
+                    draggedElement.style.cursor = 'default';
+                    draggedElement.draggable = false;
+                    element.appendChild(draggedElement);
+                    checkPuzzleCompletion();
+                } else {
+                    // Devolver a posición anterior si es incorrecto
+                    draggedElement.style.position = 'absolute';
+                    draggedElement.style.left = '0';
+                    draggedElement.style.top = '0';
+                }
+            } else {
+                // Devolver a posición anterior
+                draggedElement.style.position = 'absolute';
+                draggedElement.style.left = '0';
+                draggedElement.style.top = '0';
+            }
+            
+            draggedElement = null;
         }
 
         function checkPuzzleCompletion() {
