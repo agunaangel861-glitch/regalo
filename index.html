@@ -451,6 +451,67 @@
             0%, 100% { transform: scale(1); }
             50% { transform: scale(1.1); }
         }
+
+        /* ESTILOS POST-IT */
+        .post-its-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 8;
+        }
+
+        .post-it {
+            position: absolute;
+            width: 180px;
+            padding: 20px;
+            background: linear-gradient(135deg, #ffeb3b 0%, #fdd835 100%);
+            border: 3px solid #f9a825;
+            border-radius: 3px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            font-size: 0.9rem;
+            color: #333;
+            line-height: 1.4;
+            text-align: center;
+            font-weight: bold;
+            animation: float 6s ease-in-out infinite;
+            pointer-events: auto;
+        }
+
+        .post-it:nth-child(1) {
+            top: 15%;
+            right: 10%;
+            animation-delay: 0s;
+            transform: rotate(-8deg);
+        }
+
+        .post-it:nth-child(2) {
+            bottom: 15%;
+            left: 10%;
+            animation-delay: 0.5s;
+            transform: rotate(5deg);
+        }
+
+        @media (max-width: 768px) {
+            .post-it {
+                width: 140px;
+                padding: 15px;
+                font-size: 0.8rem;
+            }
+
+            .post-it:nth-child(1) {
+                top: 10%;
+                right: 5%;
+            }
+
+            .post-it:nth-child(2) {
+                bottom: 10%;
+                left: 5%;
+            }
+        }
     </style>
 
 </head>
@@ -467,6 +528,17 @@
 
     <!-- PANTALLA 1: INICIO -->
     <div id="screen1" class="screen active">
+        <!-- Post-its flotantes -->
+        <div class="post-its-container">
+            <div class="post-it">
+                Esto era para el día 28<br>
+                Si lo estás viendo antes es que tienes un novio muy impaciente 😅
+            </div>
+            <div class="post-it" style="width: 160px; font-size: 0.85rem;">
+                Te echo mucho de menos, deseo de corazón que volvamos a estar felices 🥺
+            </div>
+        </div>
+
         <div class="container">
             <h1 class="title">Este regalo es algo distinto, porque tendrás que resolver un par de retos para poder conseguirlo 👀</h1>
             <div style="margin-bottom: 30px;">
@@ -858,7 +930,7 @@
         function createFallingHeart() {
             const heart = document.createElement('div');
             heart.className = 'falling-heart';
-            heart.textContent = ['❤️', '💕', '💖'][Math.floor(Math.random() * 3)];
+            heart.textContent = '💝';
             heart.style.left = Math.random() * window.innerWidth + 'px';
             heart.style.top = '50px';
             document.body.appendChild(heart);
